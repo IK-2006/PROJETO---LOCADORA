@@ -1,0 +1,35 @@
+/* Estilos para páginas de exclusão */
+.confirmation-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-box h2 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+}
+
+.client-info, .locacao-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #3498db;
+}
+
+.client-info p, .locacao-info p {
+    margin-bottom: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+}
+
+.form-actions .btn {
+    flex: 1;
+    text-align: center;
+}
