@@ -6,7 +6,7 @@ if (isset($_GET['excluir'])) {
     $id = $_GET['excluir'];
     
     // Verificar se o cliente tem locações vinculadas
-    $stmt_check = $pdo->prepare("SELECT COUNT(*) as total FROM LOCACAO WHERE ID_CLIENTE = ?");
+    $stmt_check = $pdo->prepare("SELECT COUNT(*) as total FROM " . TABLE_LOCACAO . " WHERE ID_CLIENTE = ?");
     $stmt_check->execute([$id]);
     $result = $stmt_check->fetch(PDO::FETCH_ASSOC);
     
@@ -15,7 +15,7 @@ if (isset($_GET['excluir'])) {
         exit;
     }
     
-    $stmt = $pdo->prepare("DELETE FROM CLIENTE WHERE ID_CLIENTE = ?");
+    $stmt = $pdo->prepare("DELETE FROM " . TABLE_CLIENTE . " WHERE ID_CLIENTE = ?");
     if ($stmt->execute([$id])) {
         header("Location: listar.php?sucesso=Cliente excluído com sucesso!");
         exit;
@@ -26,7 +26,7 @@ if (isset($_GET['excluir'])) {
 }
 
 // Buscar clientes
-$stmt = $pdo->query("SELECT * FROM CLIENTE ORDER BY ID_CLIENTE");
+$stmt = $pdo->query("SELECT * FROM " . TABLE_CLIENTE . " ORDER BY ID_CLIENTE");
 $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
