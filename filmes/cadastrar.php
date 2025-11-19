@@ -1,5 +1,6 @@
 <?php
-include '../config.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 // Buscar categorias para o select
 $categorias = $pdo->query("SELECT * FROM " . TABLE_CATEGORIA . " ORDER BY NOME_CATEGORIA")->fetchAll(PDO::FETCH_ASSOC);
@@ -10,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $titulo = trim($_POST['titulo']);
     $ano = trim($_POST['ano']);
     $id_categoria = $_POST['id_categoria'] ?: null;
-    
+
     // Validações
     if (empty($titulo) || empty($ano)) {
         $erro = "Título e Ano são obrigatórios!";
@@ -18,53 +19,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Ano inválido! Deve ser entre 1900 e " . (date('Y') + 5);
     } else {
         // Buscar próximo ID
-        $stmt = $pdo->query("SELECT COALESCE(MAX(ID_FILME), 0) + 1 as novo_id FROM " . TABLE_FILME);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $novo_id = $result['novo_id'];
-        
+        $novo_id = getNextId($pdo, TABLE_FILME, 'ID_FILME');
+
         try {
             $stmt = $pdo->prepare("INSERT INTO " . TABLE_FILME . " (ID_FILME, TITULO, ANO, ID_CATEGORIA) VALUES (?, ?, ?, ?)");
             $stmt->execute([$novo_id, $titulo, $ano, $id_categoria]);
-            header("Location: listar.php?sucesso=Filme cadastrado com sucesso!");
-            exit;
+            redirect('listar.php?sucesso=' . urlencode('Filme cadastrado com sucesso!'));
         } catch(PDOException $e) {
             $erro = "Erro ao cadastrar filme: " . $e->getMessage();
         }
     }
 }
+
+$pageTitle = 'Cadastrar Filme';
+$cssPath = '../css/style.css';
+$baseUrl = '../';
+include __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Filme</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Cadastrar Filme</h1>
-            <a href="listar.php" class="btn-voltar">← Voltar</a>
-        </header>
-
         <?php if (!empty($erro)): ?>
-            <div class="alert error"><?php echo htmlspecialchars($erro); ?></div>
+            <div class="alert error"><?php echo esc($erro); ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" action="../actions/cadastrar.php?entity=filme">
             <div class="form-group">
                 <label for="titulo">Título:</label>
                 <input type="text" id="titulo" name="titulo" 
-                       value="<?php echo isset($_POST['titulo']) ? htmlspecialchars($_POST['titulo']) : ''; ?>" 
+                       value="<?php echo isset($_POST['titulo']) ? esc($_POST['titulo']) : ''; ?>" 
                        required maxlength="100" placeholder="Digite o título do filme">
             </div>
             
             <div class="form-group">
                 <label for="ano">Ano:</label>
                 <input type="number" id="ano" name="ano" 
-                       value="<?php echo isset($_POST['ano']) ? htmlspecialchars($_POST['ano']) : date('Y'); ?>" 
+                       value="<?php echo isset($_POST['ano']) ? esc($_POST['ano']) : date('Y'); ?>" 
                        required min="1900" max="<?php echo date('Y') + 5; ?>" 
                        placeholder="Ex: 2024">
             </div>
@@ -74,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <select id="id_categoria" name="id_categoria">
                     <option value="">Selecione uma categoria</option>
                     <?php foreach ($categorias as $categoria): ?>
-                        <option value="<?php echo $categoria['ID_CATEGORIA']; ?>" 
-                            <?php echo (isset($_POST['id_categoria']) && $_POST['id_categoria'] == $categoria['ID_CATEGORIA']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($categoria['NOME_CATEGORIA']); ?>
+                        <option value="<?php echo esc($categoria['ID_CATEGORIA']); ?>" 
+                            <?php echo (isset($_POST['id_categoria']) && $_POST['id_categoria'] == $categoria['ID_CATEGORIA']) ? 'selected' : ''; ?> >
+                            <?php echo esc($categoria['NOME_CATEGORIA']); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -87,6 +75,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <a href="listar.php" class="btn">Cancelar</a>
             </div>
         </form>
-    </div>
-</body>
-</html>
+
+<?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -1,22 +1,21 @@
 <?php
-include '../config.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/helpers.php';
 
 if (!isset($_GET['id'])) {
-    header("Location: listar.php");
-    exit;
+    redirect('listar.php');
 }
 
 $id = $_GET['id'];
 $erro = '';
 
 // Buscar dados do cliente
-$stmt = $pdo->prepare("SELECT * FROM CLIENTE WHERE ID_CLIENTE = ?");
+$stmt = $pdo->prepare("SELECT * FROM " . TABLE_CLIENTE . " WHERE ID_CLIENTE = ?");
 $stmt->execute([$id]);
 $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$cliente) {
-    header("Location: listar.php?erro=Cliente não encontrado");
-    exit;
+    redirect('listar.php?erro=' . urlencode('Cliente não encontrado'));
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -24,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cpf = trim($_POST['cpf']);
     $telefone = trim($_POST['telefone']);
     $email = trim($_POST['email']);
-    
+
     // Validações
     if (empty($nome) || empty($cpf) || empty($telefone) || empty($email)) {
         $erro = "Todos os campos são obrigatórios!";
@@ -32,10 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Email inválido!";
     } else {
         try {
-            $stmt = $pdo->prepare("UPDATE CLIENTE SET NOME = ?, CPF = ?, TELEFONE = ?, EMAIL = ? WHERE ID_CLIENTE = ?");
+            $stmt = $pdo->prepare("UPDATE " . TABLE_CLIENTE . " SET NOME = ?, CPF = ?, TELEFONE = ?, EMAIL = ? WHERE ID_CLIENTE = ?");
             $stmt->execute([$nome, $cpf, $telefone, $email, $id]);
-            header("Location: listar.php?sucesso=Cliente atualizado com sucesso!");
-            exit;
+            redirect('listar.php?sucesso=' . urlencode('Cliente atualizado com sucesso!'));
         } catch(PDOException $e) {
             if ($e->getCode() == 23000) {
                 $erro = "Erro: CPF ou Email já cadastrado em outro cliente!";
@@ -45,46 +43,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
+$pageTitle = 'Editar Cliente';
+$cssPath = '../css/style.css';
+$baseUrl = '../';
+include __DIR__ . '/../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Cliente</title>
-    <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Editar Cliente</h1>
-            <a href="listar.php" class="btn-voltar">← Voltar</a>
-        </header>
-
         <?php if (!empty($erro)): ?>
-            <div class="alert error"><?php echo htmlspecialchars($erro); ?></div>
+            <div class="alert error"><?php echo esc($erro); ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" action="../actions/cadastrar.php?entity=cliente">
+            <input type="hidden" name="id" value="<?php echo esc($cliente['ID_CLIENTE']); ?>">
             <div class="form-group">
                 <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" value="<?php echo isset($_POST['nome']) ? htmlspecialchars($_POST['nome']) : htmlspecialchars($cliente['NOME']); ?>" required maxlength="100">
+                <input type="text" id="nome" name="nome" value="<?php echo isset($_POST['nome']) ? esc($_POST['nome']) : esc($cliente['NOME']); ?>" required maxlength="100">
             </div>
             
             <div class="form-group">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" value="<?php echo isset($_POST['cpf']) ? htmlspecialchars($_POST['cpf']) : htmlspecialchars($cliente['CPF']); ?>" required maxlength="11" pattern="[0-9]{11}" title="Digite apenas números (11 dígitos)">
+                <input type="text" id="cpf" name="cpf" value="<?php echo isset($_POST['cpf']) ? esc($_POST['cpf']) : esc($cliente['CPF']); ?>" required maxlength="11" pattern="[0-9]{11}" title="Digite apenas números (11 dígitos)">
             </div>
             
             <div class="form-group">
                 <label for="telefone">Telefone:</label>
-                <input type="text" id="telefone" name="telefone" value="<?php echo isset($_POST['telefone']) ? htmlspecialchars($_POST['telefone']) : htmlspecialchars($cliente['TELEFONE']); ?>" required maxlength="20">
+                <input type="text" id="telefone" name="telefone" value="<?php echo isset($_POST['telefone']) ? esc($_POST['telefone']) : esc($cliente['TELEFONE']); ?>" required maxlength="20">
             </div>
             
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : htmlspecialchars($cliente['EMAIL']); ?>" required maxlength="100">
+                <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? esc($_POST['email']) : esc($cliente['EMAIL']); ?>" required maxlength="100">
             </div>
             
             <div class="form-actions">
@@ -92,6 +81,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <a href="listar.php" class="btn">Cancelar</a>
             </div>
         </form>
-    </div>
-</body>
-</html>
+
+<?php include __DIR__ . '/../includes/footer.php'; ?>
