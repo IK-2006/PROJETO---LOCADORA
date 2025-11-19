@@ -20,11 +20,22 @@ try {
         $table_names[strtolower($table)] = $table;
     }
     
-    // Definir constantes com os nomes corretos das tabelas
-    define('TABLE_CLIENTE', isset($table_names['cliente']) ? $table_names['cliente'] : 'CLIENTE');
-    define('TABLE_FILME', isset($table_names['filme']) ? $table_names['filme'] : 'FILME');
-    define('TABLE_LOCACAO', isset($table_names['locacao']) ? $table_names['locacao'] : 'LOCACAO');
-    define('TABLE_CATEGORIA', isset($table_names['categoria']) ? $table_names['categoria'] : 'CATEGORIA');
+    // Definir constantes com os nomes corretos das tabelas - APENAS UMA VEZ
+    if (!defined('TABLE_CLIENTE')) {
+        define('TABLE_CLIENTE', isset($table_names['cliente']) ? $table_names['cliente'] : 'CLIENTE');
+    }
+    
+    if (!defined('TABLE_FILME')) {
+        define('TABLE_FILME', isset($table_names['filme']) ? $table_names['filme'] : 'FILME');
+    }
+    
+    if (!defined('TABLE_LOCACAO')) {
+        define('TABLE_LOCACAO', isset($table_names['locacao']) ? $table_names['locacao'] : 'LOCACAO');
+    }
+    
+    if (!defined('TABLE_CATEGORIA')) {
+        define('TABLE_CATEGORIA', isset($table_names['categoria']) ? $table_names['categoria'] : 'CATEGORIA');
+    }
     
 } catch(PDOException $e) {
     echo "Erro na conexão: " . $e->getMessage();
