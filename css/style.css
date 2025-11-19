@@ -1,35 +1,90 @@
-/* Estilos para páginas de exclusão */
-.confirmation-box {
-    background: white;
-    padding: 2rem;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+:root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --primary:#2b7cff;
+    --danger:#e74c3c;
+    --muted:#6b7280;
+    --success:#28a745;
+    --accent:#7c3aed;
+    --radius:8px;
+    --max-width:1100px;
+    --gap:16px;
 }
 
-.confirmation-box h2 {
-    color: #e74c3c;
-    margin-bottom: 1rem;
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:#111827;
+    -webkit-font-smoothing:antialiased;
 }
 
-.client-info, .locacao-info {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    border-left: 4px solid #3498db;
+.container{
+    max-width:var(--max-width);
+    margin:32px auto;
+    padding:24px;
 }
 
-.client-info p, .locacao-info p {
-    margin-bottom: 0.5rem;
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+header h1{margin:0;font-size:1.25rem;color:#0f172a}
+.btn-voltar{font-size:0.9rem;color:var(--primary);text-decoration:none}
+
+nav ul{display:flex;gap:12px;padding:0;margin:12px 0 20px;list-style:none}
+nav a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:6px}
+nav a:hover{background:rgba(43,124,255,0.08);color:var(--primary)}
+
+main h2{margin-top:4px;color:#0f172a}
+
+.card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.04)}
+
+/* Alerts */
+.alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;color:#0f172a}
+.alert.success{background:rgba(40,167,69,0.12);border:1px solid rgba(40,167,69,0.12);color:var(--success)}
+.alert.error{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.08);color:var(--danger)}
+.alert.info{background:rgba(43,124,255,0.06);border:1px solid rgba(43,124,255,0.06);color:var(--primary)}
+
+/* Actions row */
+.actions{display:flex;gap:12px;align-items:center;margin:14px 0 18px}
+.btn{display:inline-block;padding:8px 14px;border-radius:8px;border:none;background:transparent;color:var(--primary);cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(0.95)}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 18px rgba(43,124,255,0.12)}
+.btn-delete{background:var(--danger);color:#fff}
+.btn-edit{background:#10b981;color:#fff}
+.btn:active{transform:translateY(1px)}
+
+/* Forms */
+form{margin-top:8px}
+.form-group{margin-bottom:12px}
+label{display:block;margin-bottom:6px;font-size:0.95rem;color:var(--muted)}
+input[type="text"],input[type="email"],input[type="number"],input[type="date"],select,textarea{
+    width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6e9ef;background:#fff;font-size:0.95rem;color:#0f172a
+}
+select{appearance:none}
+.form-actions{display:flex;gap:12px;margin-top:14px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;background:transparent}
+table thead th{text-align:left;padding:12px 14px;background:transparent;color:var(--muted);font-weight:600;font-size:0.9rem}
+table tbody td{padding:12px 14px;border-top:1px solid #eef2f7}
+table tbody tr:hover td{background:rgba(15,23,42,0.02)}
+.actions .btn-edit,.actions .btn-delete{padding:6px 10px;border-radius:6px}
+
+/* Confirmation box and info */
+.confirmation-box{background:var(--card);padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,0.04);margin-bottom:16px}
+.confirmation-box h2{color:var(--danger);margin:0 0 12px}
+.client-info,.locacao-info{background:#fbfdff;padding:12px;border-radius:6px;margin-bottom:12px;border-left:4px solid var(--primary);}
+.client-info p,.locacao-info p{margin:6px 0}
+
+/* responsive */
+@media (max-width:800px){
+    .container{padding:12px;margin:16px}
+    nav ul{flex-wrap:wrap}
+    table thead{display:none}
+    table tbody td{display:block;padding:10px}
+    table tbody tr{margin-bottom:12px;border-radius:8px;background:var(--card);box-shadow:0 6px 18px rgba(15,23,42,0.03)}
 }
 
-.form-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 1rem;
-}
-
-.form-actions .btn {
-    flex: 1;
-    text-align: center;
-}
+/* small helpers */
+.muted{color:var(--muted)}
+.text-right{text-align:right}
